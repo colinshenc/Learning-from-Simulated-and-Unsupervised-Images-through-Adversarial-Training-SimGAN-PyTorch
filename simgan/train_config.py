@@ -19,7 +19,7 @@ log 		= True																							# If log == True, a display of refined images
 log_interval 	= 5																					# log_interval == # of steps before changing the display
 
 # Which cuda device would you like to use?
-cuda_num 	= 0																				# what nvidia-gpu to use
+cuda_num 	= 3																				# what nvidia-gpu to use
 
 # regularization parameter on the reconstruction loss (commonly called lambda)
 delta 		= .5	
@@ -38,7 +38,10 @@ batch_size	= 32
 
 # which learning rate to use
 lr  		= 0.00001			
-
+adam_lr     = 1e-5
+adam_B1     = 0.9
+adam_B2     = 0.999
+adam_eps    = 1e-8
 # number of steps to pretrain the refiner with
 r_pretrain	= 1000
 

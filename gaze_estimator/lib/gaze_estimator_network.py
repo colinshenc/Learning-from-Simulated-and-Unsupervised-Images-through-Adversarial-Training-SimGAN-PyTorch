@@ -22,16 +22,16 @@ class GazeEstimatorNetwork(nn.Module):
 		# self.conv is a convolutional block,
 		# it outputs a shape of (batch_size, 192, 10, 15)
 		self.conv = nn.Sequential(
-			nn.Conv2d(1, 32, 3, 1, 1),
+			nn.Conv2d(in_channels=1, out_channels=32, kernel_size=3, stride=1, padding=1),
 			nn.LeakyReLU(),
-			nn.Conv2d(32, 32, 3, 1, 1),
+			nn.Conv2d(in_channels=32, out_channels=32, kernel_size=3, stride=1, padding=1),
 			nn.LeakyReLU(),
-			nn.Conv2d(32, 64, 3, 1, 1),
+			nn.Conv2d(in_channels=32, out_channels=64, kernel_size=3, stride=1, padding=1),
 			nn.LeakyReLU(),
 			nn.MaxPool2d(3, 2, 1),
-			nn.Conv2d(64, 80, 3, 1, 1),
+			nn.Conv2d(in_channels=64, out_channels=80, kernel_size=3, stride=1, padding=1),
 			nn.LeakyReLU(),
-			nn.Conv2d(80, 192, 3, 1, 1),
+			nn.Conv2d(in_channels=80, out_channels=192, kernel_size=3, stride=1, padding=1),
 			nn.LeakyReLU(),
 			nn.MaxPool2d(2, 2, 1),
 		)

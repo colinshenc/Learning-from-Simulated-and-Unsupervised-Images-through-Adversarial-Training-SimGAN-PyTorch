@@ -12,8 +12,8 @@ import test_config
 
 if __name__ == '__main__':
 	# If you want to train, uncomment the following two line
-	#trainer = TrainSimGAN(train_config)
-	#trainer.train()
+	trainer = TrainSimGAN(train_config)
+	trainer.train()
 	
 	# If you want to test, uncomment the following two lines
 	#tester = TestSimGAN(test_config)

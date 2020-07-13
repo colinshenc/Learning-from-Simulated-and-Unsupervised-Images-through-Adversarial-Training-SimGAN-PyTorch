@@ -39,7 +39,7 @@ class TrainSimGAN(SubSimGAN):
 		
 		''' Get batch of synthetic images '''
 		synthetic_images, _ = next(self.synthetic_data_iter)
-		synthetic_images = synthetic_images.cuda(self.cfg.cuda_num)
+		synthetic_images = synthetic_images.cuda(device=self.cfg.cuda_num)
 		
 		''' Refine synthetic images '''
 		refined_images = self.R(synthetic_images)
@@ -54,7 +54,7 @@ class TrainSimGAN(SubSimGAN):
 			refined_predictions = self.D(refined_images).view(-1, 2)
 
 			''' Get a batch of real image labels '''
-			real_labels = torch.ones(refined_predictions.size(0)).type(torch.LongTensor).cuda(self.cfg.cuda_num)
+			real_labels = torch.ones(refined_predictions.size(0)).type(torch.LongTensor).cuda(device=self.cfg.cuda_num)
 			
 			''' Get the adversarial loss for generator
 				... Trying to fool discriminator ... '''
@@ -74,23 +74,23 @@ class TrainSimGAN(SubSimGAN):
 	def update_discriminator(self, pretrain=False):
 		''' get batch of real images '''
 		real_images, _ = next(self.real_data_iter)
-		real_images = real_images.cuda(self.cfg.cuda_num)
+		real_images = real_images.cuda(device=self.cfg.cuda_num)
 		real_predictions = self.D(real_images)
-		real_labels = torch.ones(real_predictions.size(0)).type(torch.LongTensor).cuda(self.cfg.cuda_num)
+		real_labels = torch.ones(real_predictions.size(0)).type(torch.LongTensor).cuda(device=self.cfg.cuda_num)
 
 		self.accuracy_real = self.get_accuracy(real_predictions, 'real')
 		self.loss_real = self.local_adversarial_loss(real_predictions, real_labels)
 
 		''' get batch of synthetic images '''
 		synthetic_images, _ = next(self.synthetic_data_iter)
-		synthetic_images = synthetic_images.cuda(self.cfg.cuda_num)
+		synthetic_images = synthetic_images.cuda(device=self.cfg.cuda_num)
 		
 		''' get batch of refined images and labels '''
 		refined_images = self.image_pool.query(self.R(synthetic_images).detach().cpu())
-		refined_images = refined_images.cuda(self.cfg.cuda_num)
+		refined_images = refined_images.cuda(device=self.cfg.cuda_num)
 
 		refined_predictions = self.D(refined_images)
-		refined_labels = torch.zeros(refined_predictions.size(0)).type(torch.LongTensor).cuda(self.cfg.cuda_num)
+		refined_labels = torch.zeros(refined_predictions.size(0)).type(torch.LongTensor).cuda(device=self.cfg.cuda_num)
 		
 		self.accuracy_refined = self.get_accuracy(real_predictions, 'refine')
 		self.loss_refined = self.local_adversarial_loss(refined_predictions, refined_labels)
@@ -202,7 +202,7 @@ class TrainSimGAN(SubSimGAN):
 			
 			if self.cfg.log == True and (step % self.cfg.log_interval == 0 or step == 0):
 				synthetic_images, _ = next(self.synthetic_data_iter)
-				synthetic_images = synthetic_images.cuda(self.cfg.cuda_num)
+				synthetic_images = synthetic_images.cuda(device=self.cfg.cuda_num)
 				refined_images = self.R(synthetic_images)
 
 				figure = np.stack([

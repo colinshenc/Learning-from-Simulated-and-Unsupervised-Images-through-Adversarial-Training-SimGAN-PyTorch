@@ -13,9 +13,9 @@ class ResnetBlock(nn.Module):
 	def __init__(self, input_features, nb_features=64, filter_size=3):
 		super(ResnetBlock, self).__init__()
 		self.conv = nn.Sequential(
-			nn.Conv2d(input_features, nb_features, filter_size, 1, 1),
+			nn.Conv2d(in_channels=input_features, out_channels=nb_features, kernel_size=filter_size, stride=1, padding=1),
 			nn.LeakyReLU(),
-			nn.Conv2d(nb_features, nb_features, filter_size, 1, 1)
+			nn.Conv2d(in_channels=nb_features, out_channels=nb_features, kernel_size=filter_size, stride=1, padding=1)
 		)
 		self.relu = nn.LeakyReLU()
 
@@ -31,15 +31,19 @@ class Refiner(nn.Module):
 
 		Notes*
 			1. input should be a batch of synthetic, grayscale images with shape equal to [1, 35, 55]
-
+			need network config change here....
 			2. Output would be a batch of refined imaged (more realistic)
+
+
+
+		RECEPTIVE FIELD ARITHMETIC
 
 	'''
 
 	def __init__(self, block_num=4, nb_features=64):
 		super(Refiner, self).__init__()
 		
-		''' Image size is [1, 35, 55] '''
+		''' Image size is [1, 35, 55] need to change here'''
 		self.conv_1 = nn.Sequential(
 			nn.Conv2d(in_channels=1, out_channels=nb_features, kernel_size=3, stride=1, padding=1),
 			nn.LeakyReLU()
@@ -47,12 +51,12 @@ class Refiner(nn.Module):
 
 		blocks = []
 		for i in range(block_num):
-			blocks.append(ResnetBlock(nb_features, nb_features, filter_size=3))
+			blocks.append(ResnetBlock(input_features=nb_features, nb_features=nb_features, filter_size=3))
 			
 				
 		self.resnet_blocks = nn.Sequential(*blocks)
 		self.conv_2 = nn.Sequential(
-			nn.Conv2d(nb_features, 1, kernel_size=1, stride=1, padding=0),
+			nn.Conv2d(in_channels=nb_features, out_channels=1, kernel_size=1, stride=1, padding=0),
 			nn.Tanh()
 		)
 
@@ -76,25 +80,25 @@ class Discriminator(nn.Module):
 	Discriminator --- class used to discriminate between refined and real data
 		
 		Notes*
-			1. Input is a set of refined or real grayscale images of shape == [1, 35, 55]
+			1. Input is a set of refined or real grayscale images of shape == [1, 35, 55], change here..
 			2. Output is a 2D conv map which is a map of probabilities between refined or real
 	'''
 
 	def __init__(self):
 		super(Discriminator, self).__init__()
 		
-		''' Image size is [1, 55, 35] '''
+		''' Image size is [1, 55, 35], change here'''
 		self.convs = nn.Sequential(
-			nn.Conv2d(1, 96, 3, 2, 1),
+			nn.Conv2d(in_channels=1, out_channels=96, kernel_size=3, stride=2, padding=1),
 			nn.LeakyReLU(),
-			nn.Conv2d(96, 64, 3, 2, 1),
+			nn.Conv2d(in_channels=96, out_channels=64, kernel_size=3, stride=2, padding=1),
 			nn.LeakyReLU(),
 			nn.MaxPool2d(3, 1, 1),
-			nn.Conv2d(64, 32, 3, 1, 1),
+			nn.Conv2d(in_channels=64, out_channels=32, kernel_size=3, stride=1, padding=1),
 			nn.LeakyReLU(),
-			nn.Conv2d(32, 32, 1, 1, 0),
+			nn.Conv2d(in_channels=32, out_channels=32, kernel_size=1, stride=1, padding=0),
 			nn.LeakyReLU(),
-			nn.Conv2d(32, 2, 1, 1, 0)
+			nn.Conv2d(in_channels=32, out_channels=2, kernel_size=1, stride=1, padding=0)
 		)
 		
 	# used externally

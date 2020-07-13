@@ -117,18 +117,27 @@ class SubSimGAN:
 		
 		# If we are using cuda, place the models on the GPU
 		if self.cfg.cuda_use:
-			self.R.cuda(self.cfg.cuda_num)
-			self.D.cuda(self.cfg.cuda_num)
+			print('cuda is available? {}'.format(torch.cuda.is_available()))
+			self.R.cuda(device=self.cfg.cuda_num)
+			self.D.cuda(device=self.cfg.cuda_num)
 
 		if self.cfg.train:
-			# Set optimizers
-			self.refiner_optimizer = torch.optim.SGD(self.R.parameters(), lr=self.cfg.lr, momentum=self.cfg.momentum)
-			self.discriminator_optimizer = torch.optim.SGD(self.D.parameters(), lr=self.cfg.lr, momentum=self.cfg.momentum)
-		
+			# Set optimizers, try Adam first?
+			# self.refiner_optimizer = torch.optim.SGD(self.R.parameters(), lr=self.cfg.lr, momentum=self.cfg.momentum)
+			# self.discriminator_optimizer = torch.optim.SGD(self.D.parameters(), lr=self.cfg.lr, momentum=self.cfg.momentum)
+
+			self.refiner_optimizer = optim.Adam(params=self.R.parameters(), lr=self.cfg.adam_lr,
+                           betas=(self.cfg.adam_B1, self.cfg.adam_B2), weight_decay=0,
+                           eps=self.cfg.adam_eps)
+			#torch.optim.SGD(self.R.parameters(), lr=self.cfg.lr, momentum=self.cfg.momentum)
+			self.discriminator_optimizer = optim.Adam(params=self.D.parameters(), lr=self.cfg.adam_lr,
+                           betas=(self.cfg.adam_B1, self.cfg.adam_B2), weight_decay=0,
+                           eps=self.cfg.adam_eps)
+			#torch.optim.SGD(self.D.parameters(), lr=self.cfg.lr, momentum=self.cfg.momentum)
 
 		self.weights_loaded = self.load_weights()
 
-		# Set loss functions
+		# Set loss functions, maybe hinge loss?
 		self.feature_loss = nn.L1Loss()
 		self.local_adversarial_loss = nn.CrossEntropyLoss()
 	
@@ -151,7 +160,7 @@ class SubSimGAN:
 		#real_folder = torchvision.datasets.ImageFolder(root=self.cfg.real_path, transform=self.transform)
 		
 		synthetic_data = DataLoader(self.cfg.synthetic_path)
-		self.synthetic_data_loader = Data.DataLoader(synthetic_data, batch_size=self.cfg.batch_size, shuffle=False, pin_memory=True, drop_last=False, num_workers=3)
+		self.synthetic_data_loader = Data.DataLoader(synthetic_data, batch_size=self.cfg.batch_size, shuffle=False, pin_memory=True, drop_last=False, num_workers=8)
 		print('num synthetic_data : {}'.format(synthetic_data.data_len))
 		
 		if self.cfg.train:
@@ -159,7 +168,7 @@ class SubSimGAN:
 			self.synthetic_data_iter = self.loop_iter(self.synthetic_data_loader)
 			
 			real_data 				 = DataLoader(self.cfg.real_path)
-			self.real_data_loader 	 = Data.DataLoader(real_data, batch_size=self.cfg.batch_size, shuffle=True, pin_memory=True, drop_last=True, num_workers=3)
+			self.real_data_loader 	 = Data.DataLoader(real_data, batch_size=self.cfg.batch_size, shuffle=True, pin_memory=True, drop_last=True, num_workers=8)
 			self.real_data_iter      = self.loop_iter(self.real_data_loader)
 		
 

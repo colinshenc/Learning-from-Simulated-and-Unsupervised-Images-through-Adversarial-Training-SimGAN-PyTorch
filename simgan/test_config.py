@@ -8,7 +8,7 @@ import torch
 
 
 # Which GPU to use
-cuda_num 		= 0
+cuda_num 		= 1,2,3
 
 # Not terribly important for testing
 batch_size 		= 256

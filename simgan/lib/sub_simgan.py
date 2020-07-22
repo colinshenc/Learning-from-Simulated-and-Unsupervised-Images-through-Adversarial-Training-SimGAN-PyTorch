@@ -126,11 +126,11 @@ class SubSimGAN:
 			# self.refiner_optimizer = torch.optim.SGD(self.R.parameters(), lr=self.cfg.lr, momentum=self.cfg.momentum)
 			# self.discriminator_optimizer = torch.optim.SGD(self.D.parameters(), lr=self.cfg.lr, momentum=self.cfg.momentum)
 
-			self.refiner_optimizer = optim.Adam(params=self.R.parameters(), lr=self.cfg.adam_lr,
+			self.refiner_optimizer = torch.optim.Adam(params=self.R.parameters(), lr=self.cfg.adam_lr,
                            betas=(self.cfg.adam_B1, self.cfg.adam_B2), weight_decay=0,
                            eps=self.cfg.adam_eps)
 			#torch.optim.SGD(self.R.parameters(), lr=self.cfg.lr, momentum=self.cfg.momentum)
-			self.discriminator_optimizer = optim.Adam(params=self.D.parameters(), lr=self.cfg.adam_lr,
+			self.discriminator_optimizer = torch.optim.Adam(params=self.D.parameters(), lr=self.cfg.adam_lr,
                            betas=(self.cfg.adam_B1, self.cfg.adam_B2), weight_decay=0,
                            eps=self.cfg.adam_eps)
 			#torch.optim.SGD(self.D.parameters(), lr=self.cfg.lr, momentum=self.cfg.momentum)
@@ -147,7 +147,9 @@ class SubSimGAN:
 	# not really important
 	def loop_iter(self, dataloader):
 		while True:
+			#print(11111)
 			for data in iter(dataloader):
+				#print('data shape {}'.format(len(data)))
 				yield data
 			
 			if not self.cfg.train:
@@ -160,8 +162,8 @@ class SubSimGAN:
 		#real_folder = torchvision.datasets.ImageFolder(root=self.cfg.real_path, transform=self.transform)
 		
 		synthetic_data = DataLoader(self.cfg.synthetic_path)
-		self.synthetic_data_loader = Data.DataLoader(synthetic_data, batch_size=self.cfg.batch_size, shuffle=False, pin_memory=True, drop_last=False, num_workers=8)
-		print('num synthetic_data : {}'.format(synthetic_data.data_len))
+		self.synthetic_data_loader = Data.DataLoader(synthetic_data, batch_size=self.cfg.batch_size, shuffle=False, pin_memory=True, drop_last=True, num_workers=8)
+		#('num synthetic_data : {}'.format(synthetic_data.data_len))
 		
 		if self.cfg.train:
 			

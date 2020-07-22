@@ -153,14 +153,17 @@ class TrainSimGAN(SubSimGAN):
 		self.build_network()	
 		self.get_data_loaders()
 
+		''' Initialize the image buffer '''
+		self.image_pool = ImagePool(self.cfg.buffer_size)
+
 		''' If no saved weights are found,
 			pretrain the refiner / discriminator '''
 		if not self.weights_loaded:
 			self.pretrain_refiner()
 			self.pretrain_discriminator()
 		
-		''' Initialize the image buffer '''
-		self.image_pool = ImagePool(self.cfg.buffer_size)
+		#''' Initialize the image buffer '''
+		# self.image_pool = ImagePool(self.cfg.buffer_size)
 		
 		''' Check if step is valid '''
 		assert self.current_step < self.cfg.train_steps, 'Target step is smaller than current step'
@@ -209,11 +212,15 @@ class TrainSimGAN(SubSimGAN):
 					var_to_np(synthetic_images[:32]),
 					var_to_np(refined_images[:32]),
 					], axis=1)
-
+				print('fig 0 shape {}'.format(np.shape(figure)))
 				figure = figure.transpose((0, 1, 3, 4, 2))
+				print('fig 5 shape {}'.format(np.shape(figure)))
 				figure = figure.reshape((4, 8) + figure.shape[1:])
+				print('fig 10 shape {}'.format(np.shape(figure)))
 				figure = stack_images(figure)
-				figure = np.squeeze(figure, axis=2)
+				print('fig 15 shape {}'.format(np.shape(figure)))
+
+				#figure = np.squeeze(figure, axis=2)not for 3 channel imgs
 				figure = np.clip(figure*255, 0, 255).astype('uint8')
 
 				cv2.imwrite(self.cfg.checkpoint_path + 'images/' + 'eyes_' + str(step) + '_.jpg', figure)

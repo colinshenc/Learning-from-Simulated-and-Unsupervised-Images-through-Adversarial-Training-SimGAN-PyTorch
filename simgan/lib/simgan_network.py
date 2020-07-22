@@ -44,8 +44,9 @@ class Refiner(nn.Module):
 		super(Refiner, self).__init__()
 		
 		''' Image size is [1, 35, 55] need to change here'''
+		'''change here channel from 1 to 3'''
 		self.conv_1 = nn.Sequential(
-			nn.Conv2d(in_channels=1, out_channels=nb_features, kernel_size=3, stride=1, padding=1),
+			nn.Conv2d(in_channels=3, out_channels=nb_features, kernel_size=3, stride=1, padding=1),
 			nn.LeakyReLU()
 		)
 
@@ -56,7 +57,7 @@ class Refiner(nn.Module):
 				
 		self.resnet_blocks = nn.Sequential(*blocks)
 		self.conv_2 = nn.Sequential(
-			nn.Conv2d(in_channels=nb_features, out_channels=1, kernel_size=1, stride=1, padding=0),
+			nn.Conv2d(in_channels=nb_features, out_channels=3, kernel_size=1, stride=1, padding=0),
 			nn.Tanh()
 		)
 
@@ -88,8 +89,9 @@ class Discriminator(nn.Module):
 		super(Discriminator, self).__init__()
 		
 		''' Image size is [1, 55, 35], change here'''
+		'''change here input channel from 1 to 3'''
 		self.convs = nn.Sequential(
-			nn.Conv2d(in_channels=1, out_channels=96, kernel_size=3, stride=2, padding=1),
+			nn.Conv2d(in_channels=3, out_channels=96, kernel_size=3, stride=2, padding=1),
 			nn.LeakyReLU(),
 			nn.Conv2d(in_channels=96, out_channels=64, kernel_size=3, stride=2, padding=1),
 			nn.LeakyReLU(),

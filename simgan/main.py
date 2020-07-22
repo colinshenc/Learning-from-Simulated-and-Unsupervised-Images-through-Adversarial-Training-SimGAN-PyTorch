@@ -16,5 +16,5 @@ if __name__ == '__main__':
 	trainer.train()
 	
 	# If you want to test, uncomment the following two lines
-	#tester = TestSimGAN(test_config)
-	#tester.refine()
+	tester = TestSimGAN(test_config)
+	tester.refine()

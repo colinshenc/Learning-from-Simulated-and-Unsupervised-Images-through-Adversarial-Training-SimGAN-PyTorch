@@ -7,19 +7,19 @@ import torch
 ''' ---- Everything below is pretty much hyperparameters to change ----- '''
 
 # path to the synthetic data set (a folder with all the synthetic images)
-synthetic_path  = ''
+synthetic_path  = '/ubc/cs/research/shield/projects/cshen001/SimGAN/syn_personreid_data/synthetic_img/'
 
 # path to the real data set (a folder with all the real images)
-real_path	= ''	
+real_path	= '/ubc/cs/research/shield/projects/cshen001/SimGAN/syn_personreid_data/real_img/'
 
 # If we want to log the model's generated outputs, set to true.
 log 		= True																							# If log == True, a display of refined images will be shown during training
 
 # Save the refiners output every log_interval steps (batches)
-log_interval 	= 5																					# log_interval == # of steps before changing the display
+log_interval 	= 50																					# log_interval == # of steps before changing the display
 
 # Which cuda device would you like to use?
-cuda_num 	= 3																				# what nvidia-gpu to use
+cuda_num 	= 0																			# what nvidia-gpu to use
 
 # regularization parameter on the reconstruction loss (commonly called lambda)
 delta 		= .5	
@@ -58,10 +58,11 @@ k_d		= 1
 print_interval  = 10	
 
 # interval to save model checkpoints (weights), measured by step (batch) number
-save_interval	= 25
+save_interval	= 2500
 
+checkpoint_root = '/ubc/cs/research/shield/projects/cshen001/SimGAN/ckpts/'
 # path to save checkpoints to
-checkpoint_path = checkpoint_root + 'checkpoint_lr0001_bs512_deltaP5_unity/'
+checkpoint_path = checkpoint_root + 'checkpoint_lr0001_bs{}_delta{}/'.format(batch_size, delta)
 
 
 

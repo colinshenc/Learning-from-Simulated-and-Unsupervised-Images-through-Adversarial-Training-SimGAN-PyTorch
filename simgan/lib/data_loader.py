@@ -20,8 +20,29 @@ class DataLoader(Dataset):
 	# used internally
 	# load image files, get # of images, load transforms
 	def __init__(self, path):
-		self.imageFiles = [img for img in os.listdir(path)]
-		self.data_len = len(self.imageFiles)
+		self.imgs = []
+
+
+		num_folder_for_training = len(next(os.walk(path))[1])
+		print('num of folders {}'.format(num_folder_for_training))
+
+
+		for person_id in os.listdir(path):
+			#print('person_id{}'.format(person_id))
+			person_images = os.path.join(path, person_id)
+
+			if os.path.isdir(person_images):
+				for img in os.listdir(person_images):
+					img = os.path.join(person_images, img)
+					#print(img)
+					self.imgs.append(img)
+
+			elif os.path.isfile(person_images):
+				self.imgs.append(person_images)
+
+			else:
+				raise Exception('input neither file nor dir!!!')
+		self.data_len = len(self.imgs)
 
 		self.transform = transforms.Compose([transforms.ToTensor()])
 		self.path = path	
@@ -29,8 +50,9 @@ class DataLoader(Dataset):
 	# used externally
 	# prepares the data by oppening image / applying the transform
 	def __getitem__(self, index):
-		image_file = self.imageFiles[index]
-		img_as_img = Image.open(self.path + image_file)
+		image_file = self.imgs[index]
+		#print('img file {}'.format(image_file))
+		img_as_img = Image.open(image_file)
 		img_as_tensor = self.transform(img_as_img)
 
 		return img_as_tensor, image_file
